@@ -1,22 +1,18 @@
 # The Sky Is Falling
 
+DSC 106 final project by Christopher Nguyen, Athena Lin, Gian Cortez, and Mac Dang.
+
 A D3 explorable explanation of NASA's reported fireballs. The page goes from a globe of detections, to how a few large events dominate the energy, to the missing measurements and limits of the record.
 
 ## Run locally
 
-The site has no build step and no runtime package installation. From the folder containing `index.html` (`dist/` in the Sites checkout), run:
+The site has no build step and no runtime package installation. From the folder containing `index.html`, run:
 
 ```sh
 python -m http.server 8000
 ```
 
 Open `http://localhost:8000`. Fetch-based data loading requires an HTTP server; opening `index.html` directly as a file will not work.
-
-## GitHub Pages
-
-The downloadable `github-pages-source.zip` contains the contents of `dist/` at its root. Unzip and commit those files at the top level of your public class-project repository. In repository Settings → Pages, choose Deploy from a branch, then `main` and `/ (root)`. All asset URLs are relative, so project-subdirectory hosting works.
-
-Add the demo video link before the final submission.
 
 ## Interactions
 

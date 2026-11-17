@@ -24,6 +24,7 @@
     <a href="#atmosphere">Atmosphere</a>
     <a href="#missing">Missing data</a>
     <a href="#data">Data and methods</a>
+    <a href="#writeup">Prototype writeup</a>
   </nav>
 </header>
 
@@ -179,6 +180,15 @@
     <p>NASA notes that the list is not complete and only has the brightest fireballs. Reporting, sensor coverage, which measurements are available, and revisions to old events can all change what we see. We do not estimate a global rate, a land and ocean split, or any link between altitude and energy. The place names for Chelyabinsk, the Bering Sea, and Sulawesi were added by us.</p>
     <p><a href="https://cneos.jpl.nasa.gov/fireballs/notes.html" target="_blank" rel="noopener">NASA revision notes</a> and <a href="downloads/attributions.txt" download>attributions and licenses</a>.</p>
   </details>
+</section>
+<section id="writeup" aria-labelledby="writeup-title">
+  <h2 id="writeup-title">Prototype writeup</h2>
+
+  <h3>What have you done so far?</h3>
+  <p>We picked the NASA/JPL CNEOS fireball dataset and saved one snapshot of it with 1,050 events from 1988 to 2025. Christopher and Mac researched the dataset and cleaned it into a CSV, and Athena and Gian checked the cleaning and made the six static figures for the proposal. We worked together on the D3 page, which has a globe and world map of the 864 events with a location, an energy histogram, the five largest events, and an altitude scatterplot, plus interactions like rotating the globe, a timeline slider, and a threshold slider. Because the repo is on Gian's GitHub account, he committed the files and turned on GitHub Pages, but we all went through the changes together before publishing. All four of us tested and debugged the page and worked on the text and README. The page goes from where fireballs are detected, to how big they are, to what the data leaves out.</p>
+
+  <h3>What will be the most challenging part of your project to design and why?</h3>
+  <p>The hardest part will be making the page a story and not just a pile of charts. A lot of the data is missing, since 186 events have no location and 472 have no altitude, so we have to show that clearly without it looking like a bug. Energy ranges from about 0.01 kt to 441 kt, so we need a log scale, and we have to explain it so readers get it quickly. Chelyabinsk is so much bigger than everything else that it makes the other events look tiny, so we added a toggle to remove it. The globe was also tricky technically, because it has to stay smooth while rotating with hundreds of dots and still show tooltips on hover. Our next step is linking the charts so a choice in one view updates the others, which will take the most time, and with four people in one repo we also have to be careful about who edits which file.</p>
 </section>
 </main>
 
