@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Sky Is Falling: NASA Fireball Data</title>
+<meta name="description" content="An explorable explanation of NASA's fireball data: where fireballs are detected, how much energy they release, and what the record leaves out.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+<script src="assets/d3.min.js" defer></script>
+<script src="assets/topojson.min.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#energy">Skip to the energy section</a>
+
+<header>
+  <h1>The Sky Is Falling</h1>
+  <p class="subtitle">An explorable explanation of NASA's fireball data</p>
+  <p class="authors">By Christopher Nguyen, Athena Lin, Gian Cortez, and Mac Dang (DSC 106)</p>
+  <nav aria-label="Sections">
+    <a href="#atlas">Atlas</a>
+    <a href="#energy">Energy</a>
+    <a href="#atmosphere">Atmosphere</a>
+    <a href="#missing">Missing data</a>
+    <a href="#data">Data and methods</a>
+  </nav>
+</header>
+
+<main>
+<section id="intro">
+  <p>A fireball is a very bright meteor. NASA's Center for Near Earth Object Studies keeps a list of them that was detected by U.S. government sensors. We used a snapshot of that list with 1,050 events from 1988 to 2025 to look at where fireballs are detected, how much energy they release, and what the data leaves out.</p>
+</section>
+
+<section id="atlas" aria-labelledby="atlas-title">
+  <h2 id="atlas-title">Where fireballs were detected</h2>
+  <p>Each dot is the place where a fireball was brightest. Drag the globe to rotate it, or switch to the world map to see every event at once. Click a dot to see its details. The color of a dot is the estimated energy of the event.</p>
+
+  <div class="controls">
+    <fieldset>
+      <legend>View</legend>
+      <label><input type="radio" name="view" value="globe" checked> Globe</label>
+      <label><input type="radio" name="view" value="map"> World map</label>
+    </fieldset>
+    <label>Energy
+      <select id="energy-filter">
+        <option value="0">All events</option>
+        <option value="1">At least 1 kt</option>
+        <option value="10">At least 10 kt</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="globe-wrap">
+    <canvas id="globe" tabindex="0" role="img" aria-label="Globe of NASA fireball events. Drag or use the arrow keys to rotate. Click a dot to select an event, or use the event menu below."></canvas>
+    <p id="load-status" role="status">Loading data</p>
+  </div>
+
+  <div class="legend">
+    <span>Estimated energy (kt of TNT)</span>
+    <div class="legend-bar" id="legend-bar"></div>
+    <div class="legend-labels"><span style="left:0%">0.01</span><span style="left:42.6%">1</span><span style="left:85.1%">100</span></div>
+  </div>
+
+  <div class="time-controls">
+    <label for="year">Show events through <output id="year-label" for="year">2025</output></label>
+    <input id="year" type="range" min="1988" max="2025" value="2025">
+    <button id="play" type="button">Play</button>
+    <button id="reset-atlas" type="button">Reset</button>
+  </div>
+  <p id="visible-count" aria-live="polite"></p>
+
+  <div class="readout" aria-live="polite">
+    <label for="event-select">Selected event</label>
+    <select id="event-select"></select>
+    <button id="random-event" type="button">Random event</button>
+    <ul id="event-details">
+      <li id="event-date"></li>
+      <li id="event-energy"></li>
+      <li id="event-alt"></li>
+      <li id="event-location"></li>
+    </ul>
+  </div>
+</section>
+
+<section id="energy" aria-labelledby="energy-title">
+  <h2 id="energy-title">Most fireballs are small</h2>
+  <p><span id="small-share">89%</span> of the events in the record release less than 1 kiloton (kt) of estimated energy, but a few are much bigger. The largest event, Chelyabinsk, is <span id="largest-share">37%</span> of the total energy in the record.</p>
+
+  <h3>Number of events by estimated energy</h3>
+  <div id="histogram" class="chart" role="group" aria-label="Histogram of estimated energy on a logarithmic horizontal axis"></div>
+  <div class="threshold">
+    <label for="threshold">Energy threshold: <output id="threshold-value" for="threshold">1 kt</output></label>
+    <input type="range" min="-2" max="2" step="0.05" value="0" id="threshold">
+  </div>
+  <p><strong id="threshold-count">118</strong> of 1,050 events are at or above the threshold. Together they make up <strong id="threshold-share">81%</strong> of the total estimated energy.</p>
+  <p class="note">Each step on the horizontal axis is 10 times bigger than the one before. This chart includes events without a location. <a href="downloads/figures/03-energy-distribution.svg">Static version (SVG)</a></p>
+
+  <h3>The five largest events</h3>
+  <p>On February 15, 2013, a fireball reached peak brightness over Russia. Its estimated energy is about 9 times the next largest event in this snapshot. Remove it below to see how much it changes the comparison.</p>
+  <div class="controls">
+    <fieldset>
+      <legend>Ranking</legend>
+      <label><input type="radio" name="ranking" value="with" checked> With Chelyabinsk</label>
+      <label><input type="radio" name="ranking" value="without"> Without Chelyabinsk</label>
+    </fieldset>
+    <button id="locate-chely" type="button">Show Chelyabinsk on the globe</button>
+  </div>
+  <div id="ranking" class="chart" role="group" aria-label="Bar chart of the five largest events by estimated energy"></div>
+  <p class="note" id="rank-note"></p>
+  <p class="note">"Impact energy" is NASA's estimate of the energy of the incoming object. It is not the energy that reached the ground. <a href="downloads/figures/06-largest-events.svg">Static version (SVG)</a></p>
+</section>
+
+<section id="atmosphere" aria-labelledby="atmosphere-title">
+  <h2 id="atmosphere-title">Fireballs happen high in the atmosphere</h2>
+  <p>The locations and altitudes in this data are where the fireball was brightest, not where anything landed. Altitude is the height above the geoid.</p>
+
+  <div class="prediction">
+    <p><strong>Make a prediction:</strong> as estimated energy goes up, does the altitude of peak brightness always go down?</p>
+    <button type="button" data-answer="yes">Yes, always</button>
+    <button type="button" data-answer="no">No, it varies</button>
+    <p id="prediction-result" aria-live="polite" hidden></p>
+  </div>
+
+  <h3>Altitude and estimated energy</h3>
+  <div id="scatter" class="chart" role="group" aria-label="Scatterplot of altitude at peak brightness against estimated energy"></div>
+  <div class="controls">
+    <label><input id="scatter-zoom" type="checkbox"> Only show events below 10 kt</label>
+  </div>
+  <p class="note">Only 578 of 1,050 events have an altitude, so this plot only describes those events. Hover over or focus a point for details. <a href="downloads/figures/04-altitude-and-energy.svg">Static version (SVG)</a></p>
+</section>
+
+<section id="missing" aria-labelledby="missing-title">
+  <h2 id="missing-title">What the record leaves out</h2>
+  <p>NASA says this list only has the brightest fireballs, and some events are missing measurements. A blank spot on the map does not mean nothing happened there.</p>
+
+  <h3>Events with missing measurements</h3>
+  <fieldset class="inline">
+    <legend>Measurement</legend>
+    <label><input type="radio" name="coverage" value="location" checked> Location</label>
+    <label><input type="radio" name="coverage" value="altitude"> Altitude</label>
+  </fieldset>
+  <div id="missing-grid" role="img"></div>
+  <p class="grid-legend" id="grid-legend"></p>
+  <p id="missing-text"></p>
+
+  <h3>Reported fireballs per year</h3>
+  <div id="annual" class="chart" role="group" aria-label="Bar chart of the number of reported fireballs per year"></div>
+  <p class="note">The number of reports depends on reporting and sensor coverage, so this chart cannot tell us if the real rate changed. The red bar is 2013, the year of the Chelyabinsk event. 1988 starts in April. <a href="downloads/figures/02-yearly-record.svg">Static version (SVG)</a></p>
+
+  <h3>Northern and southern hemispheres</h3>
+  <div id="hemispheres" class="chart" role="group" aria-label="Bar chart comparing the number of located events in the northern and southern hemispheres"></div>
+  <p class="note">The two hemispheres have the same surface area, but a difference in reported counts does not mean one has more risk. Events at exactly 0° latitude are shown separately. <a href="downloads/figures/05-hemispheres.svg">Static version (SVG)</a></p>
+
+  <h3>Takeaway</h3>
+  <p>Fireballs are detected all over the planet, and a few large events make up much of the energy. The record is also incomplete. We can describe what was reported, but we can't use it to estimate the real rate of fireballs or where they are most likely to happen.</p>
+</section>
+
+<section id="data" aria-labelledby="data-title">
+  <h2 id="data-title">Data and methods</h2>
+  <ul>
+    <li><strong>Source:</strong> NASA/JPL CNEOS Fireball Data API (version 1.2). We saved one snapshot on November 11, 2026, with events up to December 31, 2025. It has 1,050 events. <a href="https://cneos.jpl.nasa.gov/fireballs/intro.html" target="_blank" rel="noopener">NASA's fireball introduction</a> and <a href="https://ssd-api.jpl.nasa.gov/doc/fireball.html" target="_blank" rel="noopener">API documentation</a>.</li>
+    <li><strong>Measurements:</strong> Times are in UTC. Latitude, longitude, and altitude are for the moment of peak brightness. Energy is NASA's approximate impact energy in kilotons of TNT. None of the charts estimate ground damage.</li>
+    <li><strong>Our choices:</strong> Missing values stay missing. All 1,050 events are in the energy and yearly charts, 864 events with a location are in the maps and hemisphere chart, and 578 events with an altitude are in the scatterplot. The controls in the atlas only change the atlas. The map outlines come from Natural Earth and the charts are made with D3.js.</li>
+    <li><strong>Downloads:</strong>
+      <a href="downloads/fireballs.csv" download>cleaned data (CSV)</a>,
+      <a href="downloads/nasa-fireballs-original.json" download>original API response</a>,
+      <a href="downloads/data-manifest.json" download>snapshot notes</a>,
+      <a href="downloads/proposal.md" download>proposal draft</a>,
+      <a href="downloads/figures.zip" download>static figures (zip)</a>,
+      <a href="downloads/six-figures.pdf" download>static figures (PDF)</a>.
+    </li>
+  </ul>
+
+  <details>
+    <summary>Data dictionary</summary>
+    <p>The CSV has 12 columns: an event ID, the UTC date, the year, estimated impact energy (kt), radiated energy (10^10 J), signed latitude and longitude (degrees), altitude (km), velocity (km/s), and three velocity components (km/s). The ID and year are columns we made. The other columns come straight from the API, except that we used the N/S and E/W columns to make latitude and longitude negative where needed. We did not fill in or remove any values.</p>
+    <p>Energy shares add up the estimated energy of every event in the snapshot. The histogram uses equal-width bins on a log scale. The scatterplot's energy axis is also logarithmic, and the ranking chart is linear. The hemisphere chart counts latitudes above 0 as northern and below 0 as southern. The globe hides the far side of the Earth, so use the world map to see every located event at once.</p>
+    <p>NASA notes that the list is not complete and only has the brightest fireballs. Reporting, sensor coverage, which measurements are available, and revisions to old events can all change what we see. We do not estimate a global rate, a land and ocean split, or any link between altitude and energy. The place names for Chelyabinsk, the Bering Sea, and Sulawesi were added by us.</p>
+    <p><a href="https://cneos.jpl.nasa.gov/fireballs/notes.html" target="_blank" rel="noopener">NASA revision notes</a> and <a href="downloads/attributions.txt" download>attributions and licenses</a>.</p>
+  </details>
+</section>
+</main>
+
+<footer>
+  <p>Data from NASA/JPL CNEOS. Made with D3.js. This is a class project and not a NASA product.</p>
+</footer>
+
+<div id="tooltip" class="tooltip" role="tooltip" hidden></div>
+</body>
+</html>

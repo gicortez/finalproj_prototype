@@ -1,0 +1,13 @@
+{
+  "source": "NASA/JPL CNEOS Fireball Data API",
+  "apiVersion": "1.2",
+  "query": "https://ssd-api.jpl.nasa.gov/fireball.api?date-max=2025-12-31&vel-comp=true",
+  "retrievedUTC": "2026-11-11T22:37:10.546787+00:00",
+  "cutoff": "2025-12-31",
+  "count": 1050,
+  "located": 864,
+  "withAltitude": 578,
+  "first": "1988-04-15 03:03:10",
+  "last": "2025-12-16 20:58:12",
+  "notes": "One API snapshot. Missing values remain null. Includes incomplete reporting years and only sufficiently bright reported detections. Total impact energy is an estimate, not measured surface damage."
+}

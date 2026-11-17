@@ -1,0 +1,19 @@
+The Sky Is Falling — Independent educational visualization. Not a NASA product or endorsement.
+
+DATA: NASA/JPL CNEOS Fireball Data API, version 1.2. Retrieved 11 November 2026 with date-max=2025-12-31&vel-comp=true.
+https://ssd-api.jpl.nasa.gov/doc/fireball.html
+https://cneos.jpl.nasa.gov/fireballs/intro.html
+Data caveat: only the brightest reported fireballs are included. Values may be revised.
+
+MAP: Natural Earth 1:110m, via world-atlas v2 countries-110m.json. Natural Earth data is public domain.
+https://www.naturalearthdata.com/about/terms-of-use/
+https://github.com/topojson/world-atlas
+
+CODE LIBRARIES: D3 v7 (ISC), TopoJSON client v3 (ISC). License copies included.
+https://d3js.org
+https://github.com/topojson/topojson-client
+
+PROJECT REFERENCE: DSC 106 Spring 2025 showcase, reviewed for storytelling and interaction inspiration. No student source code or visual assets were copied.
+https://dsc-courses.github.io/dsc106-2025-sp/showcase/
+
+STATIC FIGURES: Generated from the same frozen snapshot with Matplotlib. Figure 1 uses D3's antimeridian clipping with Natural Earth geometry. All static figures describe the full snapshot; website atlas filters do not alter them.
